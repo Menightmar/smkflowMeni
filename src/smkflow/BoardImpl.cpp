@@ -209,10 +209,58 @@ void BoardImpl::ReleaseConnector() {
   if (!end_slot)
     return;
 
-  if (end_slot->GetColor() != start_slot_->GetColor())
-    return;
+  // Meni : Check some improved fixes , when the slot is pretend to connect with other
+  // other of same type (input with inputs) , for example :
+  //    Node A (output) connected with Node B (output) , this is fixes with this code.
 
-  Connect(start_slot_, end_slot);
+  if (start_slot_->IsConnected () && start_slot_->IsAlreadyConnected (end_slot)) {
+      
+      return;
+    }
+    
+    // Check if slots are differents.
+    
+    if (end_slot != start_slot_) {
+      
+      // Check if connect two output slots.
+      
+      if (end_slot->IsRight () && start_slot_->IsRight ()) {
+        
+        return;
+        
+      }
+      
+      // Check if connect two input slots.
+      
+      if (!end_slot->IsRight () && !start_slot_->IsRight ()) {
+        
+        return;
+        
+      }
+      
+      // Check if slots are same color.
+      
+      if (end_slot->GetColor() != start_slot_->GetColor()) {
+        
+        return;
+        
+      }
+      
+      // Connect the slots.
+      
+      Connect(start_slot_, end_slot);
+      
+    }
+    else {
+      
+      // Disconnect slots.
+      
+      start_slot_->DisconnectAll (); 
+      
+    }
+    
+    // ---------------------------------------------------------------------------------
+ 
 }
 
 void BoardImpl::AcquireView() {
